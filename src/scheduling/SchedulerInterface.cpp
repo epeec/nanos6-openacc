@@ -35,6 +35,9 @@ SchedulerInterface::SchedulerInterface()
 #if USE_CUDA
 	_deviceSchedulers[nanos6_cuda_device] = SchedulerGenerator::createDeviceScheduler(policy, enablePriority, enableImmediateSuccessor, nanos6_cuda_device);
 #endif
+#if USE_OPENACC
+	_deviceSchedulers[nanos6_openacc_device] = SchedulerGenerator::createDeviceScheduler(policy, enablePriority, enableImmediateSuccessor, nanos6_openacc_device);
+#endif
 #if NANOS6_OPENCL
 	FatalErrorHandler::failIf(true, "OpenCL is not supported yet.");
 #endif
@@ -48,6 +51,9 @@ SchedulerInterface::~SchedulerInterface()
 	delete _hostScheduler;
 #if USE_CUDA
 	delete _deviceSchedulers[nanos6_cuda_device];
+#endif
+#if USE_OPENACC
+	delete _deviceSchedulers[nanos6_openacc_device];
 #endif
 #if NANOS6_OPENCL
 	FatalErrorHandler::failIf(true, "OpenCL is not supported yet.");

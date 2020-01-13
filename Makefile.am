@@ -1100,6 +1100,7 @@ noinst_HEADERS = \
 	src/scheduling/schedulers/cluster/ClusterLocalityScheduler.hpp \
 	src/scheduling/schedulers/cluster/ClusterRandomScheduler.hpp \
 	src/scheduling/schedulers/device/CUDADeviceScheduler.hpp \
+	src/scheduling/schedulers/device/OpenAccDeviceScheduler.hpp \
 	src/scheduling/schedulers/device/DeviceScheduler.hpp \
 	src/scheduling/schedulers/device/DeviceUnsyncScheduler.hpp \
 	src/scheduling/schedulers/device/FPGADeviceScheduler.hpp \

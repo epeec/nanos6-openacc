@@ -9,6 +9,7 @@
 #include "scheduling/schedulers/HostScheduler.hpp"
 #include "scheduling/schedulers/device/CUDADeviceScheduler.hpp"
 #include "scheduling/schedulers/device/FPGADeviceScheduler.hpp"
+#include "scheduling/schedulers/device/OpenAccDeviceScheduler.hpp"
 
 HostScheduler *SchedulerGenerator::createHostScheduler(SchedulingPolicy policy, bool enablePriority, bool enableImmediateSuccessor)
 {
@@ -20,6 +21,8 @@ DeviceScheduler *SchedulerGenerator::createDeviceScheduler(SchedulingPolicy poli
 	switch(deviceType) {
 		case nanos6_cuda_device:
 			return new CUDADeviceScheduler(policy, enablePriority, enableImmediateSuccessor, deviceType);
+		case nanos6_openacc_device:
+			return new OpenAccDeviceScheduler(policy, enablePriority, enableImmediateSuccessor, deviceType);
 		case nanos6_opencl_device:
 			FatalErrorHandler::failIf(1, "OpenCL is not supported yet.");
 			break;

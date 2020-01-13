@@ -12,6 +12,7 @@
 #include "scheduling/schedulers/device/CUDADeviceScheduler.hpp"
 #include "scheduling/schedulers/device/DeviceScheduler.hpp"
 #include "scheduling/schedulers/device/FPGADeviceScheduler.hpp"
+#include "scheduling/schedulers/device/OpenAccDeviceScheduler.hpp"
 #include "tasks/Task.hpp"
 #include "tasks/TaskImplementation.hpp"
 
