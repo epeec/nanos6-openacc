@@ -14,6 +14,7 @@ char const * const nanos6_cuda_device_name = "CUDA";
 char const * const nanos6_opencl_device_name = "OPENCL";
 char const * const nanos6_cluster_device_name = "CLUSTER";
 char const * const nanos6_fpga_device_name = "FPGA";
+char const * const nanos6_openacc_device_name = "OPENACC";
 
 #pragma GCC visibility pop
 

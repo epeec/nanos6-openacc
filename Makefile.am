@@ -792,9 +792,12 @@ noinst_HEADERS = \
 	src/hardware/device/DeviceInfoImplementation.hpp \
 	src/hardware/device/implementation/CUDA.hpp \
 	src/hardware/device/implementation/FPGA.hpp \
+	src/hardware/device/implementation/OpenACC.hpp \
 	src/hardware/device/implementation/NULLDevice.hpp \
 	src/hardware/device/implementation/cuda/CUDAContext.hpp \
 	src/hardware/device/implementation/cuda/CUDAFunctions.hpp \
+	src/hardware/device/implementation/openacc/OpenAccContext.hpp \
+	src/hardware/device/implementation/openacc/OpenAccFunctions.hpp \
 	src/hardware/hwinfo/DeviceInfo.hpp \
 	src/hardware/hwinfo/HostInfo.hpp \
 	src/hardware/places/CPUPlace.hpp \
