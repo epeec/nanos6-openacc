@@ -397,6 +397,14 @@ common_sources = \
 	src/tasks/StreamManager.cpp \
 	src/tasks/Taskfor.cpp
 
+if USE_OPENACC
+openacc_LDFLAGS = -L/opt/pgi/linux86-64-nollvm/19.10/lib \
+				  -laccapi -lpgc -laccn -laccns\
+				  -Wl,-rpath,"/opt/pgi/linux86-64-nollvm/19.10/lib"
+
+else
+openacc_LDFLAGS =
+endif
 
 cluster_sources =
 if USE_CLUSTER
@@ -1149,7 +1157,7 @@ EXTRA_DIST += \
 	tests/tap-driver.sh
 
 common_libnanos6_cppflags = $(BOOST_CPPFLAGS) -DBOOST_ENABLE_ASSERT_DEBUG_HANDLER $(PTHREAD_CFLAGS) $(hwloc_CFLAGS) $(libnuma_CPPFLAGS) $(CUDA_CFLAGS) $(MPI_CXXFLAGS) $(memkind_CPPFLAGS) $(cluster_cppflags) $(workflow_cppflags) $(chronometers_CPPFLAGS) $(monitoring_CPPFLAGS) $(hw_monitoring_CPPFLAGS) $(cpu_manager_CPPFLAGS)
-common_libnanos6_ldflags = $(AM_LDFLAGS) $(BOOST_LDFLAGS) -version-info $(lib_current):$(lib_revision):$(lib_age) $(PTHREAD_CFLAGS) $(PTHREAD_LIBS) $(LDFLAGS_NOUNDEFINED) $(hwloc_LIBS) $(libnuma_LIBS) $(DLOPEN_LIBS) $(CUDA_LIBS) $(MPI_CXXLDFLAGS) $(memkind_LIBS) $(hw_monitoring_LDFLAGS) $(cpu_manager_LDFLAGS)
+common_libnanos6_ldflags = $(openacc_LDFLAGS) $(AM_LDFLAGS) $(BOOST_LDFLAGS) -version-info $(lib_current):$(lib_revision):$(lib_age) $(PTHREAD_CFLAGS) $(PTHREAD_LIBS) $(LDFLAGS_NOUNDEFINED) $(hwloc_LIBS) $(libnuma_LIBS) $(DLOPEN_LIBS) $(CUDA_LIBS) $(MPI_CXXLDFLAGS) $(memkind_LIBS) $(hw_monitoring_LDFLAGS) $(cpu_manager_LDFLAGS)
 
 
 # This is needed for debuggable spinlocks

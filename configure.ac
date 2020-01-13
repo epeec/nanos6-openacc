@@ -244,6 +244,21 @@ if test x"${ac_use_cuda}" = x"yes" ; then
 	AC_DEFINE([USE_CUDA], [1], [Define if CUDA is enabled.])
 fi
 
+AC_ARG_ENABLE([openacc], [AS_HELP_STRING([--enable-openacc], [Enable OpenACC task support])])
+
+
+if test x"${enable_openacc}" = x"yes" ; then
+	ac_use_openacc=yes
+else
+	ac_use_openacc=no
+fi
+AM_CONDITIONAL([USE_OPENACC], [test x${ac_use_openacc} = x"yes"])
+
+if test x"${ac_use_openacc}" = x"yes" ; then
+	AC_DEFINE([USE_OPENACC], [1], [Define if OpenACC is enabled.])
+	CPPFLAGS="${CPPFLAGS} ${openacc_CPPFLAGS}"
+fi
+
 # Check support for Cluster
 AC_ARG_ENABLE([cluster],
 	[AS_HELP_STRING([--enable-cluster],
@@ -479,6 +494,14 @@ if test x"${ac_use_cuda}" = x"yes" ; then
 	AC_MSG_RESULT([yes])
 	_AS_ECHO([	CUDA CFLAGS... ${CUDA_CFLAGS}])
 	_AS_ECHO([	CUDA LIBS... ${CUDA_LIBS}])
+else
+	AC_MSG_RESULT([no])
+fi
+
+_AS_ECHO([])
+_AS_ECHO_N([   OpenACC is enabled... ])
+if test x"${ac_use_openacc}" = x"yes" ; then
+	AC_MSG_RESULT([yes])
 else
 	AC_MSG_RESULT([no])
 fi
