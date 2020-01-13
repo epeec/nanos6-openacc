@@ -173,7 +173,8 @@ int DeviceComputePlace::deviceMaxRunningTask(nanos6_device_t dev)
 			EnvironmentVariable<int>("NANOS6_CUDA_MAX", 32), // CUDA
 			0,												 //
 			0,												 //
-			EnvironmentVariable<int>("NANOS6_FPGA_MAX", 32)  // FPGA
+			EnvironmentVariable<int>("NANOS6_FPGA_MAX", 32),  // FPGA
+			EnvironmentVariable<int>("NANOS6_OPENACC_MAX", 32)  // OpenACC
 		};
 
 	return nanos6_device_max_running[dev];

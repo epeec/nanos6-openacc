@@ -9,6 +9,7 @@
 #include "HardwareInfo.hpp"
 #include "device/DeviceInfoImplementation.hpp"
 #include "device/implementation/CUDA.hpp"
+#include "device/implementation/OpenACC.hpp"
 #include "device/implementation/FPGA.hpp"
 #include "hwinfo/HostInfo.hpp"
 
@@ -31,7 +32,12 @@ void HardwareInfo::initialize()
 	fpga_functions->initialize();
 	_functions[nanos6_fpga_device] = fpga_functions;
 	_infos[nanos6_fpga_device] = new DeviceInfoImplementation(nanos6_fpga_device,fpga_functions);
-	
+
+	DeviceFunctionsInterface *openacc_functions = new OpenAccFunctions();
+	openacc_functions->initialize();
+	_functions[nanos6_openacc_device] = openacc_functions;
+	_infos[nanos6_openacc_device] = new DeviceInfoImplementation(nanos6_openacc_device, openacc_functions);
+
 	for (int i = 0; i < nanos6_device_t::nanos6_device_type_num; ++i) {
 		if (_infos[i] != nullptr) {
 			_infos[i]->initialize();
