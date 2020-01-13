@@ -48,7 +48,8 @@ typedef enum
 	nanos6_opencl_device,
 	nanos6_cluster_device,
 	nanos6_fpga_device,
-	nanos6_device_type_num=5
+	nanos6_openacc_device,
+	nanos6_device_type_num=6
 } nanos6_device_t;
 
 
