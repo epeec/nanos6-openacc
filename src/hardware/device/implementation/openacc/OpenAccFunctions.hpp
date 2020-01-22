@@ -53,7 +53,7 @@ public:
 		/* Instead of 'setDevice', openACC inits the runtime for all devices of given type.
 		 * An issue with these calls is that, being void, they make error handling impossible.
 		 */
-		acc_init(_dev_type);
+		//acc_init(_dev_type);	/* For the time being this appears to cause broken CUDA contexts, so leave it out */
 
 		for (int i = 0; i < deviceCount; ++i) {
 			DeviceComputePlace *cp = new DeviceComputePlace(new DeviceMemoryPlace(i, nanos6_openacc_device),
