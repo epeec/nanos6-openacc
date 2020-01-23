@@ -23,6 +23,7 @@ private:
 
 public:
 	int _queueId; // async queue ID
+	int _launched; // flag if task has been launched; to be enabled in postBodyDevice
 	Task *_task;
 
 	OpenAccQueue(size_t index): _index(index)
@@ -54,8 +55,9 @@ public:
 	//! \brief
 	bool finished()
 	{
-		if (acc_async_test(_queueId) != 0)
-			return true;
+		if (_launched)
+			if (acc_async_test(_queueId) != 0)
+				return true;
 
 		return false;
 	}

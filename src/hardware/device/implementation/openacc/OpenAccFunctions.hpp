@@ -138,6 +138,7 @@ public:
 		OpenAccQueue *deviceDataQueue = getDeps(task->getComputePlace())->_queuePool.getQueue();
 		task->setDeviceData((void *) deviceDataQueue);
 		env->asyncId = deviceDataQueue->_queueId;
+		deviceDataQueue->_launched = 0;	// set this as a guard to running getFinishedTasks before actually launching
 		deviceDataQueue->_task = task;
 		getDeps(task->getComputePlace())->_activeQueues.push_back(deviceDataQueue);
 
@@ -146,9 +147,27 @@ public:
 
 	void postBodyDevice(Task *task, void *)
 	{
-//		auto taskcp = task->getComputePlace();
-//		auto deps = getDeps(taskcp);
-
+		// Find the corresponding asynq queue and set the launched flag;
+		// This was needed as we noticed sometimes getFinishedTasks being called before
+		// the actual kernel launch, which resulted in acc_async_test returning true.
+		//
+		// Since a 'better' way will require lots of changes, we'll just iterate to find the appropriate task...
+		auto taskcp = task->getComputePlace();
+		auto deps = getDeps(taskcp);
+		std::vector<OpenAccQueue *> *_activeQueues = &deps->_activeQueues;
+		if (_activeQueues != nullptr) {
+			std::lock_guard<SpinLock> guard(_depsLock);
+			auto it = _activeQueues->begin();
+			while (it != _activeQueues->end()) {
+				if ((*it)->_task == task) {
+					OpenAccQueue* queue = *it;
+					queue->_launched = 1;
+					return;
+				}
+				else
+					++it;
+			}
+		}
 	}
 
 	void bodyDevice(Task *, void *)
