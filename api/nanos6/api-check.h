@@ -35,6 +35,12 @@
 enum nanos6_cuda_device_api_t { nanos6_cuda_device_api = 1 };
 #endif
 
+#if USE_OPENACC
+#include "openacc_device.h"
+#else
+enum nanos6_openacc_device_api_t { nanos6_openacc_device_api = 0 };
+#endif
+
 #pragma GCC visibility push(default)
 
 enum nanos6_api_check_api_t { nanos6_api_check_api = 6 };

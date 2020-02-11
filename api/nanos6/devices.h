@@ -18,5 +18,9 @@
 #include "opencl_device.h"
 #endif
 
+#if NANOS6_OPENACC
+#include "openacc_device.h"
+#endif
+
 #endif /* NANOS6_DEVICES_H */
 
