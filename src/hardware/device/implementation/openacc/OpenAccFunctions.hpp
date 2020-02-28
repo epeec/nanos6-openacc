@@ -138,7 +138,7 @@ public:
 		OpenAccQueue *deviceDataQueue = getDeps(task->getComputePlace())->_queuePool.getQueue();
 		task->setDeviceData((void *) deviceDataQueue);
 		env->asyncId = deviceDataQueue->_queueId;
-		deviceDataQueue->_launched = 0;	// set this as a guard to running getFinishedTasks before actually launching
+		deviceDataQueue->_launched = false; // set this as a guard to running getFinishedTasks before actually launching
 		deviceDataQueue->_task = task;
 		getDeps(task->getComputePlace())->_activeQueues.push_back(deviceDataQueue);
 
@@ -161,7 +161,7 @@ public:
 			while (it != _activeQueues->end()) {
 				if ((*it)->_task == task) {
 					OpenAccQueue* queue = *it;
-					queue->_launched = 1;
+					queue->_launched = true;
 					return;
 				}
 				else

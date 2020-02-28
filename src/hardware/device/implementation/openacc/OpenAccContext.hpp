@@ -23,7 +23,7 @@ private:
 
 public:
 	int _queueId; // async queue ID
-	int _launched; // flag if task has been launched; to be enabled in postBodyDevice
+	bool _launched; // flag if task has been launched; to be enabled in postBodyDevice
 	Task *_task;
 
 	OpenAccQueue(size_t index): _index(index)
