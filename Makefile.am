@@ -398,10 +398,7 @@ common_sources = \
 	src/tasks/Taskfor.cpp
 
 if USE_OPENACC
-openacc_LDFLAGS = -L/opt/pgi/linux86-64-nollvm/19.10/lib \
-				  -laccapi -lpgc -laccn -laccns\
-				  -Wl,-rpath,"/opt/pgi/linux86-64-nollvm/19.10/lib"
-
+openacc_LDFLAGS = $(openacc_LIBS)
 else
 openacc_LDFLAGS =
 endif

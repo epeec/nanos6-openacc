@@ -248,7 +248,7 @@ AC_ARG_ENABLE([openacc], [AS_HELP_STRING([--enable-openacc], [Enable OpenACC tas
 
 
 if test x"${enable_openacc}" = x"yes" ; then
-	ac_use_openacc=yes
+	AC_CHECK_PGI
 else
 	ac_use_openacc=no
 fi
@@ -256,7 +256,6 @@ AM_CONDITIONAL([USE_OPENACC], [test x${ac_use_openacc} = x"yes"])
 
 if test x"${ac_use_openacc}" = x"yes" ; then
 	AC_DEFINE([USE_OPENACC], [1], [Define if OpenACC is enabled.])
-	CPPFLAGS="${CPPFLAGS} ${openacc_CPPFLAGS}"
 fi
 
 # Check support for Cluster
@@ -502,6 +501,7 @@ _AS_ECHO([])
 _AS_ECHO_N([   OpenACC is enabled... ])
 if test x"${ac_use_openacc}" = x"yes" ; then
 	AC_MSG_RESULT([yes])
+	_AS_ECHO([   OpenACC/PGI LIBS... ${openacc_LIBS}])
 else
 	AC_MSG_RESULT([no])
 fi
