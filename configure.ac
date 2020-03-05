@@ -256,7 +256,10 @@ AM_CONDITIONAL([USE_OPENACC], [test x${ac_use_openacc} = x"yes"])
 
 if test x"${ac_use_openacc}" = x"yes" ; then
 	AC_DEFINE([USE_OPENACC], [1], [Define if OpenACC is enabled.])
+	AC_DEFINE_UNQUOTED([NANOS6_OPENACC_PGI_HEADER], [${openacc_h_pgi}], [PGI OpenACC include header.])
 fi
+
+AM_CONDITIONAL(HAVE_OPENACC, test x"${ac_use_openacc}" = x"yes")
 
 # Check support for Cluster
 AC_ARG_ENABLE([cluster],
@@ -502,6 +505,7 @@ _AS_ECHO_N([   OpenACC is enabled... ])
 if test x"${ac_use_openacc}" = x"yes" ; then
 	AC_MSG_RESULT([yes])
 	_AS_ECHO([   OpenACC/PGI LIBS... ${openacc_LIBS}])
+	_AS_ECHO([   OpenACC/PGI openacc.h... ${openacc_h_pgi}])
 else
 	AC_MSG_RESULT([no])
 fi

@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <queue>
 
-#include <openacc.h>
+#include <config.h>
 
 #include <nanos6/openacc_device.h>
 
@@ -22,6 +22,11 @@
 #include "lowlevel/SpinLock.hpp"
 #include "memory/vmm/VirtualMemoryArea.hpp"
 #include "tasks/Task.hpp"
+
+// This is used to include the autotools-detected openacc.h provided
+// in a PGI installation. It is needed because providing the pgi/include
+// directory with -I will also include PGI's math.h etc that break everything.
+#include NANOS6_OPENACC_PGI_HEADER
 
 class OpenAccFunctions: public DeviceFunctionsInterface {
 

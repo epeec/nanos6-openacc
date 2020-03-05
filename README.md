@@ -71,13 +71,14 @@ The configure script accepts the following options:
 
 The location of elfutils, hwloc and CUDA is always retrieved through pkg-config.
 The location of PAPI can also be retrieved through pkg-config if it is not specified through the `--with-papi` parameter.
-The location of PGI compilers can also be retrieved through pkg-config if it is not specified through the `--with-pgi` parameter or included in the PATH variable.
 If they are installed in non-standard locations, pkg-config can be told where to find them through the `PKG_CONFIG_PATH` environment variable.
 For instance:
 
 ```sh
 $ export PKG_CONFIG_PATH=$HOME/installations-mn4/elfutils-0.169/lib/pkgconfig:/apps/HWLOC/2.0.0/INTEL/lib/pkgconfig:$PKG_CONFIG_PATH
 ```
+
+The location of PGI compilers can be retrieved from the PATH variable, if it is not specified through the `--with-pgi` parameter.
 
 After Nanos6 has been installed, it can be used by compiling your C, C++ and Fortran codes with Mercurium using the `--ompss-2` flag.
 Example:
