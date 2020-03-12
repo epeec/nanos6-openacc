@@ -21,6 +21,7 @@ extern "C" {
 
 typedef struct {
 	int asyncId;
+	int deviceId;
 } nanos6_openacc_device_environment_t;
 
 #ifdef __cplusplus

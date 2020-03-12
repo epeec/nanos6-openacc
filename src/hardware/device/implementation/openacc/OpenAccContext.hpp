@@ -28,6 +28,7 @@ private:
 
 public:
 	int _queueId; // async queue ID
+	int _device;
 	bool _launched; // flag if task has been launched; to be enabled in postBodyDevice
 	Task *_task;
 
@@ -60,9 +61,13 @@ public:
 	//! \brief
 	bool finished()
 	{
-		if (_launched)
+		if (_launched) {
+			// Not calling this may result in erroneous async_test result
+			// due to the way openacc runtime binds threads to contexts.
+			acc_set_device_num(_device, acc_device_default);
 			if (acc_async_test(_queueId) != 0)
 				return true;
+		}
 
 		return false;
 	}
@@ -117,6 +122,7 @@ public:
 struct OPENACC_DEVICE_DEP {
 	OpenAccQueuePool _queuePool;
 	std::vector<OpenAccQueue *> _activeQueues;
+	int _device_index;
 };
 
 #endif //OPENACC_CONTEXT_HPP

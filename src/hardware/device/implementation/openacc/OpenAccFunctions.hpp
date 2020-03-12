@@ -34,6 +34,7 @@ private:
 	SpinLock _depsLock;
 	const nanos6_device_t device_type = nanos6_openacc_device;
 	bool _correctlyInitialized;
+	int deviceCount;
 
 	acc_device_t _dev_type = acc_device_default; // as long as this works let it like that
 
@@ -45,7 +46,7 @@ public:
 		_devices.push_back(new Device(nanos6_openacc_device, 0));
 
 		_correctlyInitialized = false;
-		int deviceCount = acc_get_num_devices(_dev_type);
+		deviceCount = acc_get_num_devices(_dev_type);
 
 		if (deviceCount == 0) {
 			// warn of no device present
@@ -67,6 +68,7 @@ public:
 
 			_openaccDeps[i].first = (void *) cp;
 			_openaccDeps[i].second = new OPENACC_DEVICE_DEP();
+			_openaccDeps[i].second->_device_index = i;
 		}
 
 		_correctlyInitialized = true;
@@ -145,6 +147,8 @@ public:
 		env->asyncId = deviceDataQueue->_queueId;
 		deviceDataQueue->_launched = false; // set this as a guard to running getFinishedTasks before actually launching
 		deviceDataQueue->_task = task;
+		deviceDataQueue->_device = getDeps(task->getComputePlace())->_device_index;
+		env->deviceId = deviceDataQueue->_device;
 		getDeps(task->getComputePlace())->_activeQueues.push_back(deviceDataQueue);
 
 		return (void *) env;
