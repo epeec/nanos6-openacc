@@ -20,23 +20,23 @@ void HardwareInfo::initialize()
 {
 	_infos.resize(nanos6_device_t::nanos6_device_type_num);
 	_functions.resize(nanos6_device_t::nanos6_device_type_num);
-	
+
 	_infos[nanos6_device_t::nanos6_host_device] = new HostInfo();
-	
-	DeviceFunctionsInterface* cuda_functions = new CUDAFunctions();
-	cuda_functions->initialize();
-	_functions[nanos6_cuda_device] = cuda_functions;
-	_infos[nanos6_cuda_device] = new DeviceInfoImplementation(nanos6_cuda_device, cuda_functions);
-	
-	DeviceFunctionsInterface* fpga_functions = new FPGAFunctions();
-	fpga_functions->initialize();
-	_functions[nanos6_fpga_device] = fpga_functions;
-	_infos[nanos6_fpga_device] = new DeviceInfoImplementation(nanos6_fpga_device,fpga_functions);
 
 	DeviceFunctionsInterface *openacc_functions = new OpenAccFunctions();
 	openacc_functions->initialize();
 	_functions[nanos6_openacc_device] = openacc_functions;
 	_infos[nanos6_openacc_device] = new DeviceInfoImplementation(nanos6_openacc_device, openacc_functions);
+
+	DeviceFunctionsInterface* cuda_functions = new CUDAFunctions();
+	cuda_functions->initialize();
+	_functions[nanos6_cuda_device] = cuda_functions;
+	_infos[nanos6_cuda_device] = new DeviceInfoImplementation(nanos6_cuda_device, cuda_functions);
+
+	DeviceFunctionsInterface* fpga_functions = new FPGAFunctions();
+	fpga_functions->initialize();
+	_functions[nanos6_fpga_device] = fpga_functions;
+	_infos[nanos6_fpga_device] = new DeviceInfoImplementation(nanos6_fpga_device,fpga_functions);
 
 	for (int i = 0; i < nanos6_device_t::nanos6_device_type_num; ++i) {
 		if (_infos[i] != nullptr) {
@@ -57,7 +57,7 @@ void HardwareInfo::shutdown()
 		}
 	}
 }
-	
+
 bool HardwareInfo::canDeviceRunTasks(nanos6_device_t type)
 {
 	if (type == nanos6_host_device) {

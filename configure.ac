@@ -246,7 +246,6 @@ fi
 
 AC_ARG_ENABLE([openacc], [AS_HELP_STRING([--enable-openacc], [Enable OpenACC task support])])
 
-
 if test x"${enable_openacc}" = x"yes" ; then
 	AC_CHECK_PGI
 else
