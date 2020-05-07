@@ -89,15 +89,19 @@ $ mcxx -c --ompss-2 a_part_in_c_plus_plus.cxx
 $ mcxx --ompss-2 a_part_in_c.o a_part_in_c_plus_plus.o -o app
 ```
 
-To use OpenACC tasks, it is needed to use PGI-enabled Mercurium:
+To use OpenACC tasks, it is needed to use PGI-enabled Mercurium, and add the `--openacc` flag:
 
 ```sh
-$ pgimcc --ompss-2 app_in_c.c -o app
-$ pgimcxx --ompss-2 app_in_cpp.cpp -o app
+$ pgimcc -c --ompss-2 --openacc a_part_in_c.c
+$ pgimcxx -c --ompss-2 --openacc a_part_in_cpp.cpp
+$ pgimcxx --ompss-2 --openacc a_part_in_c.o a_part_in_c_plus_plus.o -o app
 ```
 
 Note that the above invocation automatically passes `-fast -acc -ta=tesla:managed` flags to the PGI compilers,
 so NVIDIA target devices with unified memory are assumed without need for the user to specify these options.
+Additionally, mixed compilation with `mcxx` and `pgimcxx` -used to compile different object files- is also
+supported, useful for existing projects that may need to add an OpenACC tasks part on top of the current
+code base. However, in these cases the final executable should be linked with `pgimcxx`.
 
 ## Execution
 
