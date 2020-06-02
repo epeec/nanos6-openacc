@@ -62,14 +62,14 @@ The configure script accepts the following options:
 1. `--with-extrae=prefix` to specify the prefix of the extrae installation
 1. `--with-pqos=prefix` to specify the prefix of the PQoS installation
 1. `--with-dlb=prefix` to specify the prefix of the DLB installation
-1. `--enable-cuda` to enable support for CUDA tasks
+1. `--with-cuda[=prefix]` to enable support for CUDA tasks; optionally specify the prefix of the CUDA installation, if needed
 1. `--enable-openacc` to enable support for OpenACC tasks. Requires PGI compilers
 1. `--with-pgi=prefix` to specify the prefix of the PGI compilers installation, in case they are not in current PATH variable
 1. `--enable-monitoring` to enable monitoring and predictions of task/CPU/thread statistics
 1. `--enable-chrono-arch` to enable an architecture-based timer for the monitoring infrastructure
 1. `--enable-monitoring-hwevents` to enable monitoring of hardware counters (which must be paired with an appropriate library)
 
-The location of elfutils, hwloc and CUDA is always retrieved through pkg-config.
+The location of elfutils and hwloc is always retrieved through pkg-config.
 The location of PAPI can also be retrieved through pkg-config if it is not specified through the `--with-papi` parameter.
 If they are installed in non-standard locations, pkg-config can be told where to find them through the `PKG_CONFIG_PATH` environment variable.
 For instance:
@@ -77,6 +77,9 @@ For instance:
 ```sh
 $ export PKG_CONFIG_PATH=$HOME/installations-mn4/elfutils-0.169/lib/pkgconfig:/apps/HWLOC/2.0.0/INTEL/lib/pkgconfig:$PKG_CONFIG_PATH
 ```
+
+The location of CUDA can be retrieved automatically, if it is in standard system locations (/usr/lib, /usr/include etc.),
+or through pkg-config, if it is not specified using the prefix in `--with-cuda=prefix` parameter.
 
 The location of PGI compilers can be retrieved from the PATH variable, if it is not specified through the `--with-pgi` parameter.
 
