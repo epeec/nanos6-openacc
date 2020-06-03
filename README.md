@@ -14,7 +14,7 @@ To install Nanos6 the following tools and libraries must be installed:
 1. [boost](http://boost.org) >= 1.59
 1. [hwloc](https://www.open-mpi.org/projects/hwloc/)
 1. [numactl](http://oss.sgi.com/projects/libnuma/)
-1. Finally, it's highly recommended to have a installation of [Mercurium](https://github.com/bsc-pm/mcxx) with OmpSs-2 support enabled. When installing OmpSs-2 for the first time, you can break the chicken and egg dependence between Nanos6 and Mercurium in both sides: on one hand, you can install Nanos6 without specifying a valid installation of Mercurium. On the other hand, you can install Mercurium without a valid installation of Nanos6 using the `--enable-nanos6-bootstrap` configuration flag.
+1. Finally, it's highly recommended to have an installation of [Mercurium](https://github.com/bsc-pm/mcxx) with OmpSs-2 support enabled. When installing OmpSs-2 for the first time, you can break the chicken and egg dependence between Nanos6 and Mercurium in both sides: on one hand, you can install Nanos6 without specifying a valid installation of Mercurium. On the other hand, you can install Mercurium without a valid installation of Nanos6 using the `--enable-nanos6-bootstrap` configuration flag.
 
 ### Optional libraries and tools
 
@@ -92,20 +92,6 @@ $ mcxx -c --ompss-2 a_part_in_c_plus_plus.cxx
 $ mcxx --ompss-2 a_part_in_c.o a_part_in_c_plus_plus.o -o app
 ```
 
-To use OpenACC tasks, it is needed to use PGI-enabled Mercurium, and add the `--openacc` flag:
-
-```sh
-$ pgimcc -c --ompss-2 --openacc a_part_in_c.c
-$ pgimcxx -c --ompss-2 --openacc a_part_in_cpp.cpp
-$ pgimcxx --ompss-2 --openacc a_part_in_c.o a_part_in_c_plus_plus.o -o app
-```
-
-Note that the above invocation automatically passes `-fast -acc -ta=tesla:managed` flags to the PGI compilers,
-so NVIDIA target devices with unified memory are assumed without need for the user to specify these options.
-Additionally, mixed compilation with `mcxx` and `pgimcxx` -used to compile different object files- is also
-supported, useful for existing projects that may need to add an OpenACC tasks part on top of the current
-code base. However, in these cases the final executable should be linked with `pgimcxx`.
-
 ## Execution
 
 Nanos6 applications can be executed as is.
@@ -145,6 +131,10 @@ In our implementation, worksharing tasks are run by taskfor groups.
 Each worksharing task can be run by at most as many workers (also known as collaborators) as a taskfor group has.
 Users can set the number of groups (and so, implicitly, the number of collaborators) by setting the `NANOS6_TASKFOR_GROUPS` environment variable.
 By default, there are as many groups as NUMA nodes in the system.
+
+## Using device tasks
+
+For information about using device tasks, refer to the [devices](docs/devices/Devices.md) documentation.
 
 ## Tracing, debugging and other options
 
