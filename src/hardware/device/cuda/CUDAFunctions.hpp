@@ -17,6 +17,13 @@
 class CUDAFunctions {
 
 public:
+	// Dummy names for starting up
+	enum CUDAMemoryFlags
+	{
+		CUDAGlobal,
+		CUDAAttached
+	};
+
 	static bool initialize()
 	{
 		// Dummy setDevice operation to initialize CUDA runtime;
@@ -114,6 +121,36 @@ public:
 	{
 		cudaError_t err = cudaFreeHost(ptr);
 		CUDAErrorHandler::handle(err, "Freeing pinned host memory");
+	}
+
+	static void *mallocManaged(size_t size, int device, CUDAMemoryFlags flag)
+	{
+		void *ptr;
+		int passedFlags;
+		// Keep current device if the request is for another one, restore later
+		int oldDevice = getActiveDevice();
+		cudaError_t err;
+		// Warn if size == 0? cudaMallocManaged will return error either way...
+		switch (flag) {
+			case CUDAGlobal:
+				passedFlags = cudaMemAttachGlobal;
+				break;
+			case CUDAAttached:
+			default:
+				passedFlags = cudaMemAttachHost;
+		}
+
+		if (device != oldDevice)
+			setActiveDevice(device);
+
+		err = cudaMallocManaged(&ptr, size, passedFlags);
+		CUDAErrorHandler::handle(err, "In CUDA Managed malloc");
+
+		// Revert device selection in case it has been changed by the malloc request
+		if (device != oldDevice)
+			setActiveDevice(oldDevice);
+
+		return ptr;
 	}
 
 	static void createEvent(cudaEvent_t &event)
