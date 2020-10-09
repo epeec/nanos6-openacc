@@ -465,6 +465,15 @@ endif
 
 common_sources += $(openacc_sources)
 
+devmemmanager_sources =
+
+if USE_DEVMEMMAN
+devmemmanager_sources += \
+	src/hardware/device/DeviceMemManager.cpp
+endif
+
+common_sources += $(devmemmanager_sources)
+
 regions_dependency_sources = \
 	src/dependencies/linear-regions-fragmented/DataAccessRegistration.cpp \
 	src/dependencies/linear-regions-fragmented/CommutativeScoreboard.cpp \
@@ -757,6 +766,7 @@ noinst_HEADERS = \
 	src/hardware/HardwareInfo.hpp \
 	src/hardware/device/Accelerator.hpp \
 	src/hardware/device/DeviceEnvironment.hpp \
+	src/hardware/device/DeviceMemManager.hpp \
 	src/hardware/device/cuda/CUDAAccelerator.hpp \
 	src/hardware/device/cuda/CUDADeviceInfo.hpp \
 	src/hardware/device/cuda/CUDAFunctions.hpp \

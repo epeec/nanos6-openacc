@@ -223,6 +223,17 @@ if test x"${ac_use_openacc}" = x"yes" ; then
     AC_DEFINE_UNQUOTED([NANOS6_OPENACC_PGI_HEADER], [${openacc_h_pgi}], [PGI OpenACC include header.])
 fi
 
+# Check if any GPU device is enabled to enable Device Memory Manager
+if test x"${ac_use_openacc}" = x"yes" -o x"${ac_use_cuda}" = x"yes" ; then
+	ac_use_devmemman=yes
+else
+	ac_use_devmemman=no
+fi
+AM_CONDITIONAL([USE_DEVMEMMAN], [test x${ac_use_devmemman} = x"yes"])
+
+if test x"${ac_use_devmemman}" = x"yes" ; then
+	AC_DEFINE([USE_DEVMEMMAN], [1], [Define if DeviceMemManager is enabled.])
+fi
 
 # Dependency engines to build
 
