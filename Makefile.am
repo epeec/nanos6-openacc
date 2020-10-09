@@ -455,6 +455,15 @@ endif
 
 common_sources += $(openacc_sources)
 
+devmemmanager_sources =
+
+if USE_DEVMEMMAN
+devmemmanager_sources += \
+	src/hardware/device/DeviceMemManager.cpp
+endif
+
+common_sources += $(devmemmanager_sources)
+
 cluster_sources =
 if USE_CLUSTER
 cluster_sources += \
@@ -880,6 +889,7 @@ noinst_HEADERS = \
 	src/hardware/cluster/null/ClusterNode.hpp \
 	src/hardware/device/Accelerator.hpp \
 	src/hardware/device/DeviceEnvironment.hpp \
+	src/hardware/device/DeviceMemManager.hpp \
 	src/hardware/device/cuda/CUDAAccelerator.hpp \
 	src/hardware/device/cuda/CUDADeviceInfo.hpp \
 	src/hardware/device/cuda/CUDAFunctions.hpp \
