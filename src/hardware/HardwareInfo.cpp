@@ -18,6 +18,10 @@
 #include "hardware/device/openacc/OpenAccDeviceInfo.hpp"
 #endif
 
+#if USE_DEVMEMMAN
+#include "hardware/device/DeviceMemManager.hpp"
+#endif
+
 std::vector<DeviceInfo *> HardwareInfo::_infos;
 
 void HardwareInfo::initialize()
@@ -34,10 +38,16 @@ void HardwareInfo::initialize()
 	_infos[nanos6_device_t::nanos6_cuda_device] = new CUDADeviceInfo();
 #endif
 // Fill the rest of the devices accordingly, once implemented
+#if USE_DEVMEMMAN
+	DeviceMemManager::initialize();
+#endif
 }
 
 void HardwareInfo::shutdown()
 {
+#if USE_DEVMEMMAN
+	DeviceMemManager::shutdown();
+#endif
 	for (int i = 0; i < nanos6_device_t::nanos6_device_type_num; ++i) {
 		if (_infos[i] != nullptr) {
 			delete _infos[i];

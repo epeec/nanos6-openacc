@@ -27,6 +27,14 @@ private:
 	static const size_t totalDevices;
 
 public:
+	static void initialize()
+	{
+	}
+
+	static void shutdown()
+	{
+	}
+
 	// Allocate Unified Memory (host+device at once) and add an entry in _directory
 	static void *alloc(size_t size, int deviceNum);
 
