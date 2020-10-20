@@ -55,6 +55,7 @@ nanos6include_HEADERS = \
 	api/nanos6/cuda_device.h \
 	api/nanos6/debug.h \
 	api/nanos6/devices.h \
+	api/nanos6/device_mem_man.h \
 	api/nanos6/events.h \
 	api/nanos6/final.h \
 	api/nanos6/instrument.h \

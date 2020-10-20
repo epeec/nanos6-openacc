@@ -21,5 +21,9 @@
 #include "opencl_device.h"
 #endif
 
+#if (NANOS6_OPENACC || NANOS6_CUDA)
+#include "device_mem_man.h"
+#endif
+
 #endif /* NANOS6_DEVICES_H */
 
