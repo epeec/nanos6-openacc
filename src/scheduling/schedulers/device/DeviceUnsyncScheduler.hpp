@@ -10,13 +10,19 @@
 #include "scheduling/schedulers/UnsyncScheduler.hpp"
 
 class DeviceUnsyncScheduler : public UnsyncScheduler {
-public:
-	DeviceUnsyncScheduler(SchedulingPolicy policy, bool enablePriority, bool enableImmediateSuccessor)
-		: UnsyncScheduler(policy, enablePriority, enableImmediateSuccessor)
-	{}
+private:
+	size_t _totalDevices;
+	Container::vector<ReadyQueue *> _readyTasksDevice;
 
-	virtual ~DeviceUnsyncScheduler()
-	{}
+public:
+	DeviceUnsyncScheduler(
+		SchedulingPolicy policy,
+		bool enablePriority,
+		bool enableImmediateSuccessor,
+		size_t totalDevices
+	);
+
+	virtual ~DeviceUnsyncScheduler();
 
 	//! \brief Get a ready task for execution
 	//!
@@ -24,6 +30,14 @@ public:
 	//!
 	//! \returns a ready task or nullptr
 	Task *getReadyTask(ComputePlace *computePlace);
+
+	//! \brief Add a (ready) task that has been created or freed
+	//!
+	//! \param[in] task the task to be added
+	//! \param[in] computePlace the hardware place of the creator or the liberator
+	//! \param[in] hint a hint about the relation of the task to the current task
+	void addReadyTask(Task *task, ComputePlace *computePlace, ReadyTaskHint hint) override;
+
 };
 
 
