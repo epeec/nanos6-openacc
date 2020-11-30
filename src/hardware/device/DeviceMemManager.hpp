@@ -11,6 +11,7 @@
 
 #include "hardware/device/cuda/CUDAFunctions.hpp"
 #include "lowlevel/RWSpinLock.hpp"
+#include "tasks/Task.hpp"
 
 class DeviceMemManager {
 
@@ -53,6 +54,9 @@ public:
 	{
 		return getEntry(ptr).deviceNum;
 	}
+
+	// Given a -device- task, compute the device-affinity (device_num to execute on) based on dependencies
+	static size_t computeDeviceAffinity(Task *task);
 
 };
 

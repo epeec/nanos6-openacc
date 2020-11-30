@@ -4,8 +4,14 @@
 	Copyright (C) 2020 Barcelona Supercomputing Center (BSC)
 */
 
-#include "hardware/device/DeviceMemManager.hpp"
+#include <algorithm>
+
+#include "DeviceMemManager.hpp"
+
 #include "hardware/HardwareInfo.hpp"
+
+#include <DataAccessRegistration.hpp>
+#include <DataAccessRegistrationImplementation.hpp>
 
 const size_t DeviceMemManager::totalDevices = CUDAFunctions::getDeviceCount();
 RWSpinLock DeviceMemManager::_lock;
@@ -68,5 +74,28 @@ DeviceMemManager::DeviceMemEntry DeviceMemManager::getEntry(void *ptr)
 	}
 
 	return ret;
+}
+
+size_t DeviceMemManager::computeDeviceAffinity(Task *task)
+{
+	size_t deviceScore[totalDevices] = { };
+
+	DataAccessRegistration::processAllDataAccesses(task,
+		[&](const DataAccess *access) -> bool {
+			if (access->getType() != REDUCTION_ACCESS_TYPE && !access->isWeak()) {
+				void *address = access->getAccessRegion().getStartAddress();
+				if (contains(address)) {
+					int device = getDataLocation(address);
+					size_t accessSize = access->getAccessRegion().getSize();
+					deviceScore[device] += accessSize;
+				}
+			}
+			return true;
+		}
+	);
+
+	size_t ret = std::distance(deviceScore, std::max_element(deviceScore, deviceScore + totalDevices));
+	return ret;
+
 }
 
