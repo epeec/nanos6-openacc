@@ -78,7 +78,7 @@ DeviceMemManager::DeviceMemEntry DeviceMemManager::getEntry(void *ptr)
 
 int DeviceMemManager::computeDeviceAffinity(Task *task)
 {
-	int deviceScore[totalDevices] = { };
+	size_t deviceScore[totalDevices] = { };
 
 	DataAccessRegistration::processAllDataAccesses(task,
 		[&](const DataAccess *access) -> bool {
@@ -87,7 +87,7 @@ int DeviceMemManager::computeDeviceAffinity(Task *task)
 				if (contains(address)) {
 					int device = getDataLocation(address);
 					size_t accessSize = access->getAccessRegion().getSize();
-					deviceScore[device] += (int)accessSize;
+					deviceScore[device] += accessSize;
 				}
 			}
 			return true;
