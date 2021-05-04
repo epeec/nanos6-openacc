@@ -200,22 +200,27 @@ public:
 		return _taskInvokationInfo;
 	}
 
-	//! Actual code of the task
-	virtual inline void body(nanos6_address_translation_entry_t *translationTable = nullptr)
+	inline uint8_t getImplementationCount() const
 	{
-		assert(_taskInfo->implementation_count == 1);
-		assert(hasCode());
-		assert(_taskInfo != nullptr);
-		assert(!isTaskfor());
-		_taskInfo->implementations[0].run(_argsBlock, (void *)&_deviceEnvironment, translationTable);
+		return _taskInfo->implementation_count;
 	}
 
-	//! Check if the task has an actual body
-	inline bool hasCode() const
+	//! Actual code of the task
+	virtual inline void body(nanos6_address_translation_entry_t *translationTable = nullptr, uint8_t implementation = 0)
 	{
-		assert(_taskInfo->implementation_count == 1); // TODO: temporary check for a single implementation
+		assert(_taskInfo->implementation_count > 0 && implementation < _taskInfo->implementation_count);	// okorak
+		assert(hasCode(implementation));
 		assert(_taskInfo != nullptr);
-		return (_taskInfo->implementations[0].run != nullptr); // TODO: solution until multiple implementations are allowed
+		assert(!isTaskfor());
+		_taskInfo->implementations[implementation].run(_argsBlock, (void *)&_deviceEnvironment, translationTable);
+	}
+
+	//! Check if a task implementation has an actual body
+	inline bool hasCode(uint8_t implementation = 0) const
+	{
+		assert(_taskInfo != nullptr);
+		assert(_taskInfo->implementation_count > 0 && implementation < _taskInfo->implementation_count);
+		return (_taskInfo->implementations[implementation].run != nullptr);
 	}
 
 	//! \brief sets the thread assigned to tun the task
@@ -450,9 +455,9 @@ public:
 	}
 
 	//! \brief Indicates whether it has finished
-	inline bool hasFinished()
+	inline bool hasFinished(uint8_t implementation = 0)
 	{
-		if (_taskInfo->implementations[0].device_type_id != nanos6_host_device) {
+		if (_taskInfo->implementations[implementation].device_type_id != nanos6_host_device) {
 			return (_computePlace == nullptr);
 		} else {
 			return (_thread == nullptr);
@@ -671,10 +676,18 @@ public:
 		return _memoryPlace != nullptr;
 	}
 
-	//! \brief Get the device type for which this task is implemented
+	//! \brief Get the device type for which this task is implemented. TODO: Unify with below using default param value?
+#if 0
 	inline int getDeviceType()
 	{
 		return _taskInfo->implementations[0].device_type_id;
+	}
+#endif
+
+	//! \brief Get the device type of one of multiple implementations, in case this is a multi-implements task
+	inline int getDeviceType(uint8_t implementation = 0)
+	{
+		return _taskInfo->implementations[implementation].device_type_id;
 	}
 
 	//! \brief Get the device subtype for which this task is implemented, TODO: device_subtype_id.
@@ -698,15 +711,13 @@ public:
 	}
 
 	//! \brief Get a label that identifies the tasktype
-	inline const std::string getLabel() const
+	inline const std::string getLabel(uint8_t implementation = 0) const
 	{
 		if (_taskInfo != nullptr) {
-			if (_taskInfo->implementations != nullptr) {
-				if (_taskInfo->implementations->task_label != nullptr) {
-					return std::string(_taskInfo->implementations->task_label);
-				} else if (_taskInfo->implementations->declaration_source != nullptr) {
-					return std::string(_taskInfo->implementations->declaration_source);
-				}
+			if (_taskInfo->implementations[implementation].task_label != nullptr) {
+				return std::string(_taskInfo->implementations[implementation].task_label);
+			} else if (_taskInfo->implementations[implementation].declaration_source != nullptr) {
+				return std::string(_taskInfo->implementations[implementation].declaration_source);
 			}
 
 			// If the label is empty, use the invocation source
@@ -719,11 +730,11 @@ public:
 	}
 
 	//! \brief Check whether cost is available for the task
-	inline bool hasCost() const
+	inline bool hasCost(uint8_t implementation = 0) const
 	{
 		if (_taskInfo != nullptr) {
 			if (_taskInfo->implementations != nullptr) {
-				return (_taskInfo->implementations->get_constraints != nullptr);
+				return (_taskInfo->implementations[implementation].get_constraints != nullptr);
 			}
 		}
 
@@ -731,12 +742,12 @@ public:
 	}
 
 	//! \brief Get the task's cost
-	inline size_t getCost() const
+	inline size_t getCost(uint8_t implementation = 0) const
 	{
 		size_t cost = 1;
 		if (hasCost()) {
 			nanos6_task_constraints_t constraints;
-			_taskInfo->implementations->get_constraints(_argsBlock, &constraints);
+			_taskInfo->implementations[implementation].get_constraints(_argsBlock, &constraints);
 			cost = constraints.cost;
 		}
 

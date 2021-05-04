@@ -128,7 +128,7 @@ typedef struct __attribute__((aligned(64)))
 	void (*get_priority)(void *args_block, nanos6_priority_t* priority);
 
 	//! \brief Number of implementations of the task
-	int /*const*/ implementation_count; //TODO: removed const for obstructing construction, until further decision
+	unsigned char /*const*/ implementation_count; //TODO: removed const for obstructing construction, until further decision
 
 	//! \brief Array of implementations
 	nanos6_task_implementation_info_t /*const*/ *implementations; //TODO: removed const for obstructing construction, until further decision
@@ -178,7 +178,7 @@ typedef struct __attribute__((aligned(64)))
 // NOTE: The full version depends also on nanos6_major_api
 //       That is:   nanos6_major_api . nanos6_instantiation_api
 //! \brief This needs to be incremented on every change to the instantiation API
-enum nanos6_instantiation_api_t { nanos6_instantiation_api = 4 };
+enum nanos6_instantiation_api_t { nanos6_instantiation_api = 5 };
 
 typedef enum {
 	//! Specifies that the task will be a final task
