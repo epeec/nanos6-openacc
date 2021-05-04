@@ -41,7 +41,16 @@ public:
 		assert(computePlace->getType() == _deviceType);
 
 		Task *result = getTask(computePlace);
-		assert(result == nullptr || result->getDeviceType() == _deviceType);
+		if (result != nullptr) {
+			// If the task has multiple implementations, find the one for the particular device type
+			// The upper-level SchedulerInterface has made sure there is the device implementation
+			for (uint8_t i = 0; i < result->getImplementationCount(); i++) {
+				if (result->getDeviceType(i) == _deviceType) {
+					break;
+				}
+			}
+		}
+		assert(result == nullptr);
 		return result;
 	}
 

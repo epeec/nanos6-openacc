@@ -21,7 +21,16 @@ public:
 	inline Task *getReadyTask(ComputePlace *computePlace)
 	{
 		Task *result = getTask(computePlace);
-		assert(result == nullptr || result->getDeviceType() == nanos6_host_device);
+		if (result != nullptr) {
+			// If the task has multiple implementations, find the SMP one;
+			// The upper-level SchedulerInterface has made sure there is an SMP implementation
+			for (uint8_t i = 0; i < result->getImplementationCount(); i++) {
+				if (result->getDeviceType(i) == nanos6_host_device) {
+					break;
+				}
+			}
+		}
+		assert(result == nullptr);
 		return result;
 	}
 

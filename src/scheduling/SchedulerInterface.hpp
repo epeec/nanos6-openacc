@@ -44,15 +44,33 @@ public:
 			return;
 		}
 #endif
+		nanos6_device_t taskType;
+		for (uint8_t i = 0; i < task->getImplementationCount(); i++) {
+			taskType = (nanos6_device_t) task->getDeviceType(i);
+			assert(taskType != nanos6_cluster_device);
+		}
 
-		nanos6_device_t taskType = (nanos6_device_t) task->getDeviceType();
-		assert(taskType != nanos6_cluster_device);
+		if (task->getImplementationCount() > 1) {
+			// select one implementation type
+			// e.g. query Energy-And-Load Manager ==> returns device type ==> send it to that device
+			// Initial PoC, assume 2 implements only and just pick one. *DUMMY*
+			if (true) {
+				if (taskType == nanos6_host_device) {
+					_hostScheduler->addReadyTask(task, computePlace, hint);
+				} else {
+					assert(taskType == _deviceSchedulers[taskType]->getDeviceType());
+					_deviceSchedulers[taskType]->addReadyTask(task, computePlace, hint);
+				}
 
-		if (taskType == nanos6_host_device) {
-			_hostScheduler->addReadyTask(task, computePlace, hint);
-		} else {
-			assert(taskType == _deviceSchedulers[taskType]->getDeviceType());
-			_deviceSchedulers[taskType]->addReadyTask(task, computePlace, hint);
+			}
+		}
+		else {
+			if (taskType == nanos6_host_device) {
+				_hostScheduler->addReadyTask(task, computePlace, hint);
+			} else {
+				assert(taskType == _deviceSchedulers[taskType]->getDeviceType());
+				_deviceSchedulers[taskType]->addReadyTask(task, computePlace, hint);
+			}
 		}
 	}
 
