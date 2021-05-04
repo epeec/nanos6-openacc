@@ -211,13 +211,15 @@ void AddTask::submitTask(Task *task, Task *parent, bool fromUserCode)
 		ready = DataAccessRegistration::registerTaskDataAccesses(task, computePlace, computePlace->getDependencyData());
 	}
 
+	bool hasMultiImplements = (task->getImplementationCount() > 1);
+	// NOTE: This changes if it is a multi-implements task, leave for future change
 	bool executesInDevice = (task->getDeviceType() != nanos6_host_device);
 	bool isIf0 = task->isIf0();
 
 	assert(parent != nullptr || ready);
 	assert(parent != nullptr || !isIf0);
 
-	if (ready && (!isIf0 || executesInDevice)) {
+	if (ready && (!isIf0 || executesInDevice || hasMultiImplements)) {
 		// Queue the task if ready and not if0. Device if0 ready tasks must be
 		// queued too; they are managed by the device scheduling infrastructure
 		ReadyTaskHint hint = (parent != nullptr) ? CHILD_TASK_HINT : NO_HINT;
@@ -227,7 +229,7 @@ void AddTask::submitTask(Task *task, Task *parent, bool fromUserCode)
 
 	// Special handling for if0 tasks
 	if (isIf0) {
-		if (ready && !executesInDevice) {
+		if (ready && !executesInDevice && !hasMultiImplements) {
 			// Ready if0 tasks are executed inline, if they are not device tasks
 			If0Task::executeInline(workerThread, parent, task, computePlace);
 		} else {
@@ -252,11 +254,21 @@ void nanos6_create_task(
 	size_t num_deps
 ) {
 	// TODO: Temporary check until multiple implementations are supported
-	assert(task_info->implementation_count == 1);
+	// okorak: multi-implements support is coming
+//	assert(task_info->implementation_count == 1);
 
-	nanos6_device_t deviceType = (nanos6_device_t) task_info->implementations[0].device_type_id;
-	if (!HardwareInfo::canDeviceRunTasks(deviceType)) {
-		FatalErrorHandler::fail("No hardware associated for task device type", deviceType);
+	if (task_info->implementation_count > 1) {
+		// add task to multi-implements directory/map; here or in submit?
+		for (uint8_t i = 0; i < task_info->implementation_count; i++);
+			//do smth and remove the ; above
+	}
+	// Consider to obsolete this, if multi-implements are present then ignore the non-existent device;
+	// fail if no applicable device is available
+	else {
+		nanos6_device_t deviceType = (nanos6_device_t) task_info->implementations[0].device_type_id;
+		if (!HardwareInfo::canDeviceRunTasks(deviceType)) {
+			FatalErrorHandler::fail("No hardware associated for task device type", deviceType);
+		}
 	}
 
 	Task *task = AddTask::createTask(
