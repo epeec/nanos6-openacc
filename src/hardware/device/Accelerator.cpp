@@ -32,7 +32,15 @@ void Accelerator::runTask(Task *task)
 			task, _computePlace, stackTranslationTable,
 			tableSize);
 
-	task->body(translationTable);
+	// For multi-implements cases
+	uint8_t implementation = 0;
+	for (implementation = 0; implementation < task->getImplementationCount(); implementation++) {
+		if (task->getDeviceType(implementation) == _deviceType) {
+			break;
+		}
+	}
+	assert(task->getDeviceType(implementation) == _deviceType);
+	task->body(translationTable, implementation);
 
 	if (tableSize > 0)
 		MemoryAllocator::free(translationTable, tableSize);

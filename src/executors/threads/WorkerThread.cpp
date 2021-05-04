@@ -170,6 +170,15 @@ void WorkerThread::executeTask(CPU *cpu)
 
 	nanos6_address_translation_entry_t stackTranslationTable[SymbolTranslation::MAX_STACK_SYMBOLS];
 
+	// For multi-implements cases
+	uint8_t implementation = 0;
+	for (implementation = 0; implementation < _task->getImplementationCount(); implementation++) {
+		if (_task->getDeviceType(implementation) == nanos6_host_device) {
+			break;
+		}
+	}
+	assert(_task->getDeviceType(implementation) == nanos6_host_device);
+
 	const size_t NUMAId = cpu->getNumaNodeId();
 	MemoryPlace *memoryPlace = HardwareInfo::getMemoryPlace(nanos6_host_device, NUMAId);
 	assert(memoryPlace != nullptr);
@@ -187,7 +196,7 @@ void WorkerThread::executeTask(CPU *cpu)
 		taskId, cpu->getInstrumentationId(), _instrumentationId
 	);
 
-	if (_task->hasCode()) {
+	if (_task->hasCode(implementation)) {
 		size_t tableSize = 0;
 		nanos6_address_translation_entry_t *translationTable =
 			SymbolTranslation::generateTranslationTable(
@@ -199,7 +208,7 @@ void WorkerThread::executeTask(CPU *cpu)
 
 		// Run the task
 		std::atomic_thread_fence(std::memory_order_acquire);
-		_task->body(translationTable);
+		_task->body(translationTable, implementation);
 		std::atomic_thread_fence(std::memory_order_release);
 
 		// Update the CPU since the thread may have migrated
