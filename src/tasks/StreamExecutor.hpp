@@ -217,7 +217,7 @@ public:
 	}
 
 	//! \brief The body of a stream executor
-	inline void body(nanos6_address_translation_entry_t * = nullptr) override
+	inline void body(nanos6_address_translation_entry_t * = nullptr, uint8_t = 0) override
 	{
 		StreamFunction *function;
 		while (!_mustShutdown.load()) {

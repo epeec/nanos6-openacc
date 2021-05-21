@@ -7,10 +7,10 @@
 #include "Taskloop.hpp"
 #include "tasks/LoopGenerator.hpp"
 
-void Taskloop::body(nanos6_address_translation_entry_t *translationTable)
+void Taskloop::body(nanos6_address_translation_entry_t *translationTable, uint8_t implementation = 0)
 {
 	if (!isTaskloopSource()) {
-		getTaskInfo()->implementations[0].run(getArgsBlock(), &getBounds(), translationTable);
+		getTaskInfo()->implementations[implementation].run(getArgsBlock(), &getBounds(), translationTable);
 	} else {
 		while (getIterationCount() > 0) {
 			LoopGenerator::createTaskloopExecutor(this, _bounds);

@@ -242,7 +242,7 @@ public:
 		setRunnable(true);
 	}
 
-	inline void body(nanos6_address_translation_entry_t *translationTable) override
+	inline void body(nanos6_address_translation_entry_t *translationTable, uint8_t = 0) override
 	{
 		assert(hasCode());
 		assert(isRunnable());
