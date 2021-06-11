@@ -10,6 +10,8 @@
 #include "hardware/places/MemoryPlace.hpp"
 #include "scheduling/Scheduler.hpp"
 
+thread_local Task* OpenAccAccelerator::_currentTask;
+
 int OpenAccAccelerator::pollingService(void *data)
 {
 	OpenAccAccelerator *accel = (OpenAccAccelerator *)data;
