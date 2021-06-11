@@ -15,6 +15,7 @@
 ConfigVariable<bool> OpenAccAccelerator::_pinnedPolling("devices.openacc.polling.pinned");
 ConfigVariable<size_t> OpenAccAccelerator::_usPollingPeriod("devices.openacc.polling.period_us");
 
+thread_local Task* OpenAccAccelerator::_currentTask;
 
 void OpenAccAccelerator::acceleratorServiceLoop()
 {

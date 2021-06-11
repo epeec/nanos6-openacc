@@ -28,6 +28,9 @@ private:
 	// The time period in microseconds between device service runs
 	static ConfigVariable<size_t> _usPollingPeriod;
 
+	// To be used in order to obtain the current task in nanos6_get_current_acc_queue() call
+	thread_local static Task* _currentTask;
+
 	inline bool isQueueAvailable()
 	{
 		return _queuePool.isQueueAvailable();
@@ -50,6 +53,9 @@ private:
 
 	inline void preRunTask(Task *task) override
 	{
+		// set the thread_local static var to be used by nanos6_get_current_acc_queue()
+		_currentTask = task;
+
 		OpenAccQueue *queue = (OpenAccQueue *)task->getDeviceData();
 		assert(queue != nullptr);
 		queue->setTask(task);
@@ -99,6 +105,12 @@ public:
 	{
 		_queuePool.releaseAsyncQueue((OpenAccQueue *)queue);
 	}
+
+	static inline Task *getCurrentTask()
+	{
+		return _currentTask;
+	}
+
 };
 
 #endif // OPENACC_ACCELERATOR_HPP
