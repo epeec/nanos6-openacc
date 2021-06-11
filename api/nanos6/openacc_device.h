@@ -23,6 +23,8 @@ typedef struct {
 	int asyncId;
 } nanos6_openacc_device_environment_t;
 
+int nanos6_get_current_acc_queue(void);
+
 #ifdef __cplusplus
 }
 #endif
