@@ -202,6 +202,10 @@ if USE_CUDA
 symbol_resolution += loader/symbol-resolver/cuda-device-api.c
 endif
 
+if USE_OPENACC
+symbol_resolution += loader/symbol-resolver/openacc-device-api.c
+endif
+
 multidimensional_regions += \
 	multidim-region-dependency-resolvers.c \
 	multidim-release-resolvers.c \
@@ -236,6 +240,10 @@ symbol_resolution += \
 
 if USE_CUDA
 symbol_resolution += loader/indirect-symbols/cuda-device-api.c
+endif
+
+if USE_OPENACC
+symbol_resolution += loader/indirect-symbols/openacc-device-api.c
 endif
 
 multidimensional_regions += \
