@@ -13,17 +13,25 @@
 
 class DeviceUnsyncScheduler : public UnsyncScheduler {
 public:
-	DeviceUnsyncScheduler(SchedulingPolicy policy, bool enablePriority, bool enableImmediateSuccessor)
-		: UnsyncScheduler(policy, enablePriority, enableImmediateSuccessor)
+	DeviceUnsyncScheduler(
+		SchedulingPolicy policy,
+		bool enablePriority,
+		bool enableImmediateSuccessor,
+		size_t totalDevices
+	) :
+		UnsyncScheduler(policy, enablePriority, enableImmediateSuccessor)
 	{
-		_numQueues = 1;
-		_queues = (ReadyQueue **) MemoryAllocator::alloc(sizeof(ReadyQueue *));
+		_numQueues = totalDevices;
+		_queues = (ReadyQueue **) MemoryAllocator::alloc(_numQueues * sizeof(ReadyQueue *));
+		assert(_queues != nullptr);
 
-		// Create a single queue at the first position
-		if (enablePriority) {
-			_queues[0] = new ReadyQueueMap(policy);
-		} else {
-			_queues[0] = new ReadyQueueDeque(policy);
+		// Create a queue for each device
+		for (size_t i = 0; i < _numQueues; i++) {
+			if (enablePriority) {
+				_queues[i] = new ReadyQueueMap(policy);
+			} else {
+				_queues[i] = new ReadyQueueDeque(policy);
+			}
 		}
 	}
 

@@ -7,6 +7,7 @@
 #include "UnsyncScheduler.hpp"
 #include "dependencies/DataTrackingSupport.hpp"
 #include "executors/threads/CPUManager.hpp"
+#include "hardware/device/DeviceMemManager.hpp"
 
 
 UnsyncScheduler::UnsyncScheduler(
@@ -41,14 +42,21 @@ UnsyncScheduler::~UnsyncScheduler()
 
 void UnsyncScheduler::regularAddReadyTask(Task *task, bool unblocked)
 {
-	uint64_t NUMAid = task->getNUMAHint();
+	uint64_t NUMAid = 0;
 
-	// In case there is no hint, use round robin to balance the load
-	if (NUMAid == (uint64_t) -1) {
-		do {
-			NUMAid = _roundRobinQueues;
-			_roundRobinQueues = (_roundRobinQueues + 1) % _numQueues;
-		} while (_queues[NUMAid] == nullptr);
+	if (task->getDeviceType() == nanos6_host_device) {
+		NUMAid = task->getNUMAHint();
+
+		// In case there is no hint, use round robin to balance the load
+		if (NUMAid == (uint64_t) -1) {
+			do {
+				NUMAid = _roundRobinQueues;
+				_roundRobinQueues = (_roundRobinQueues + 1) % _numQueues;
+			} while (_queues[NUMAid] == nullptr);
+		}
+	}
+	else {
+		NUMAid = DeviceMemManager::computeDeviceAffinity(task);
 	}
 
 	assert(NUMAid < _numQueues);
@@ -60,10 +68,16 @@ void UnsyncScheduler::regularAddReadyTask(Task *task, bool unblocked)
 Task *UnsyncScheduler::regularGetReadyTask(ComputePlace *computePlace)
 {
 	uint64_t NUMAid = 0;
+	nanos6_device_t deviceType = computePlace->getType();
 
 	if (_numQueues > 1) {
-		assert(computePlace->getType() == nanos6_host_device);
-		NUMAid = ((CPU *)computePlace)->getNumaNodeId();
+		if (deviceType == nanos6_host_device) {
+			NUMAid = ((CPU *)computePlace)->getNumaNodeId();
+		}
+		else {
+			NUMAid = (uint64_t)computePlace->getIndex();
+		}
+
 	}
 	assert(NUMAid < _numQueues);
 
@@ -72,8 +86,8 @@ Task *UnsyncScheduler::regularGetReadyTask(ComputePlace *computePlace)
 	if (result != nullptr)
 		return result;
 
-	if (_numQueues > 1) {
-		// Try to steal considering distance and load balance
+	if (_numQueues > 1 && deviceType == nanos6_host_device) {
+		// Try to steal considering distance and load balance, only for SMP tasks; no stealing for device tasks yet
 		const std::vector<uint64_t> &distances = HardwareInfo::getNUMADistances();
 
 		const double distanceThold = DataTrackingSupport::getDistanceThreshold();
